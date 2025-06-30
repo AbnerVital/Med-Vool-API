@@ -27,5 +27,8 @@ public record DadosCadastroMedico(
 
         //é necessário colocar o @valid para o Spring poder validar o outro DTO.
         @NotNull @Valid DadosEndereco endereco
+
+
 ) {
+
 }

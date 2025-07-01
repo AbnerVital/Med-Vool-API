@@ -5,6 +5,8 @@ import med.voll.api.medico.Medico;
 import med.voll.api.medico.MedicoDTO;
 import med.voll.api.repository.MedicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -17,10 +19,8 @@ public class MedicoService {
     private MedicoRepository medicoRepository;
 
 
-    public List<DadosListagemMedico> listagemDeMedico() {
-        return medicoRepository.findAll().stream()
-                .map(DadosListagemMedico::new)
-                .sorted(Comparator.comparing(DadosListagemMedico::nome))
-                .toList();
+    public Page<DadosListagemMedico> listagemDeMedico(Pageable paginacao) {
+        return medicoRepository.findAll(paginacao)
+                .map(DadosListagemMedico::new);
     }
 }

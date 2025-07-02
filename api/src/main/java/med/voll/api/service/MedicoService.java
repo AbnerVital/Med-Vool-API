@@ -1,6 +1,6 @@
 package med.voll.api.service;
 
-import jakarta.validation.Valid;
+import jakarta.transaction.Transactional;
 import med.voll.api.medico.DadosAtualizacaoMedico;
 import med.voll.api.medico.DadosListagemMedico;
 import med.voll.api.repository.MedicoRepository;
@@ -16,12 +16,23 @@ public class MedicoService {
 
 
     public Page<DadosListagemMedico> listagemDeMedico(Pageable paginacao) {
-        return medicoRepository.findAll(paginacao)
+        return medicoRepository.findAllByAtivoTrue(paginacao)
                 .map(DadosListagemMedico::new);
     }
 
-    public void atualizaDadosMedico(@Valid DadosAtualizacaoMedico dados) {
+    @Transactional
+    public void atualizaDadosMedico(DadosAtualizacaoMedico dados) {
         var medico = medicoRepository.getReferenceById(dados.id());
         medico.atualizarInformacoes(dados);
+    }
+
+    @Transactional
+    public void exluirDadosMedico(Long id) {
+//        exclui os dados do banco de dados
+//        medicoRepository.deleteById(id);
+
+//        executa uma exclusão lógica(não exlcui do banco de dados)
+        var medico = medicoRepository.getReferenceById(id);
+        medico.inativarMedico();
     }
 }

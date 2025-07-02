@@ -1,17 +1,13 @@
 package med.voll.api.service;
 
+import jakarta.validation.Valid;
+import med.voll.api.medico.DadosAtualizacaoMedico;
 import med.voll.api.medico.DadosListagemMedico;
-import med.voll.api.medico.Medico;
-import med.voll.api.medico.MedicoDTO;
 import med.voll.api.repository.MedicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class MedicoService {
@@ -22,5 +18,10 @@ public class MedicoService {
     public Page<DadosListagemMedico> listagemDeMedico(Pageable paginacao) {
         return medicoRepository.findAll(paginacao)
                 .map(DadosListagemMedico::new);
+    }
+
+    public void atualizaDadosMedico(@Valid DadosAtualizacaoMedico dados) {
+        var medico = medicoRepository.getReferenceById(dados.id());
+        medico.atualizarInformacoes(dados);
     }
 }

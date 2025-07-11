@@ -1,4 +1,4 @@
-# 🏥 Voll.med API - Gerenciamento de Médicos e Pacientes
+# 🏥 Voll.med API - Gerenciamento de Médicos e Pacientes com Autenticação JWT
 
 Este projeto é uma **API RESTful** completa desenvolvida em Java com o framework Spring Boot, projetada para o gerenciamento de informações de médicos e pacientes. A API oferece um conjunto robusto de operações CRUD (Criar, Ler, Atualizar, Excluir/Inativar) para ambas as entidades, incorporando validações de dados rigorosas, paginação para consultas eficientes, tratamento transacional e gerenciamento de erros global.
 
@@ -6,17 +6,19 @@ Este projeto é uma **API RESTful** completa desenvolvida em Java com o framewor
 
 ## 📌 Sobre o Projeto
 
-A **Voll.med API** foi construída como uma solução abrangente para a gestão de dados clínicos, demonstrando e praticando conceitos essenciais de desenvolvimento de APIs com Spring Boot, tais como:
+A **Voll.med API** evoluiu para incluir um sistema de segurança robusto, demonstrando e praticando conceitos essenciais de desenvolvimento de APIs seguras com Spring Boot, tais como:
 
 * **Arquitetura RESTful**: Design de endpoints HTTP claros e sem estado para operações CRUD sobre recursos de médicos e pacientes.
-* **Persistência de Dados**: Utilização do **Spring Data JPA** para interagir com um banco de dados relacional, mapeando entidades (`Medico`, `Paciente`, `Endereco`).
-* **Validação de Dados**: Implementação de validações robustas com **Jakarta Bean Validation** (`@Valid`, `@NotBlank`, `@Email`, `@Pattern`, `@NotNull`) para garantir a integridade e conformidade dos dados de entrada.
-* **DTOs (Data Transfer Objects)**: Uso de records para definir o formato dos dados de entrada e saída (ex: `DadosCadastroMedico`, `DadosListagemPaciente`), promovendo a separação de responsabilidades e a segurança da API.
+* **Autenticação e Autorização JWT**: Implementação completa de um fluxo de login que gera um JWT para autenticar usuários e proteger os endpoints da API usando Spring Security.
+* **Spring Security**: Configuração e integração do Spring Security para gerenciar a segurança da aplicação, incluindo filtros de requisição e gerenciamento de sessões `STATELESS`.
+* **Persistência de Dados**: Utilização do **Spring Data JPA** para interagir com um banco de dados relacional, mapeando entidades (`Medico`, `Paciente`, `Endereco`, `Usuario`).
+* **Validação de Dados**: Implementação de validações rigorosas com **Jakarta Bean Validation** (`@Valid`, `@NotBlank`, `@Email`, `@Pattern`, `@NotNull`) para garantir a integridade dos dados de entrada.
+* **DTOs (Data Transfer Objects)**: Uso de records para definir o formato dos dados de entrada e saída, promovendo a separação de responsabilidades e a segurança da API.
 * **Gerenciamento Transacional**: Aplicação de `@Transactional` para garantir a atomicidade e consistência das operações de escrita no banco de dados.
 * **Paginação**: Implementação de paginação para as listagens de médicos e pacientes, otimizando o desempenho e a escalabilidade para grandes volumes de dados.
-* **Soft Delete**: Médicos e pacientes são "excluídos" logicamente (inativados) em vez de removidos fisicamente do banco de dados, preservando o histórico e a integridade referencial.
-* **Lombok**: Redução de código boilerplate (getters, setters, construtores, `equals`/`hashCode`) com anotações como `@Getter`, `@NoArgsConstructor`, `@AllArgsConstructor`, `@EqualsAndHashCode`.
-* **Tratamento de Erros Global**: Implementação de um `RestControllerAdvice` para centralizar o tratamento de exceções, retornando respostas de erro padronizadas e informativas.
+* **Soft Delete**: Médicos e pacientes são "excluídos" logicamente (inativados) em vez de removidos fisicamente do banco de dados, preservando o histórico.
+* **Lombok**: Redução de código boilerplate (getters, setters, construtores, `equals`/`hashCode`).
+* **Tratamento de Erros Global**: Implementação de um `RestControllerAdvice` para centralizar o tratamento de exceções, retornando respostas de erro padronizadas.
 
 ---
 
@@ -25,7 +27,8 @@ A **Voll.med API** foi construída como uma solução abrangente para a gestão 
 <div>
  <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white">
  <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white">
- <img src="https://img.shields.io/badge/Spring_Data_JPA-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+ <img src="https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white">
+ <img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white">
  <img src="https://img.shields.io/badge/Lombok-E10098?style=for-the-badge&logo=lombok&logoColor=white">
  <img src="https://img.shields.io/badge/Jakarta_Validation-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white">
@@ -47,17 +50,20 @@ A **Voll.med API** foi construída como uma solução abrangente para a gestão 
 │           └── 📁 med/
 │               └── 📁 voll/
 │                   └── 📁 api/
-│                       ├── 📁 controller/           (Controladores REST para Médicos e Pacientes)
+│                       ├── 📁 controller/           (Controladores REST para Médicos, Pacientes e Autenticação)
 │                       ├── 📁 domain/               (Classes de domínio e DTOs para entidades)
 │                       │   ├── 📁 endereco/         (Classes e records relacionados à entidade Endereco)
 │                       │   ├── 📁 medico/           (Classes e records relacionados à entidade Medico)
-│                       │   └── 📁 paciente/         (Classes e records relacionados à entidade Paciente)
-│                       ├── 📁 infra/                (Classes de infraestrutura, ex: TratadorDeErros)
+│                       │   ├── 📁 paciente/         (Classes e records relacionados à entidade Paciente)
+│                       │   └── 📁 usuario/          (Classes e records relacionados à entidade Usuario e Autenticação)
+│                       ├── 📁 infra/                (Classes de infraestrutura)
+│                       │   ├── 📁 exception/        (Tratamento global de erros)
+│                       │   └── 📁 security/         (Configurações de segurança, JWT e filtros)
 │                       ├── 📁 repository/           (Interfaces de repositório Spring Data JPA)
 │                       ├── 📁 service/              (Classes de serviço com a lógica de negócio)
 │                       └── 📄 ApiApplication.java   (Classe principal da aplicação Spring Boot)
 │       └── 📁 resources/
-│           └── 📄 application.properties (Configurações do banco de dados)
+│           └── 📄 application.properties (Configurações do banco de dados e JWT Secret)
 ├── 📄 .gitignore
 ├── 📄 api.iml                     (Arquivo de módulo da IDE)
 ├── 📄 pom.xml                     (Configurações de dependências Maven)
@@ -79,7 +85,7 @@ Para executar este projeto (backend API) em sua máquina local, siga os passos a
 
 2.  **Clone o repositório:**
     ```bash
-    git clone https://github.com/AbnerVital/Med-Vool-API.git
+    git clone https://github.com/AbnerVital/Med-Vool-API
     ```
 
 3.  **Navegue até o diretório do projeto:**
@@ -87,7 +93,7 @@ Para executar este projeto (backend API) em sua máquina local, siga os passos a
     cd api 
     ```
 
-4.  **Configuração do Banco de Dados**:
+4.  **Configuração do Banco de Dados e JWT Secret**:
     * Abra o arquivo `src/main/resources/application.properties`.
     * Configure as propriedades do seu banco de dados.
         * **Exemplo para PostgreSQL:**
@@ -95,10 +101,10 @@ Para executar este projeto (backend API) em sua máquina local, siga os passos a
             spring.datasource.url=jdbc:postgresql://localhost:5432/vollmed_api_db
             spring.datasource.username=seu_usuario
             spring.datasource.password=sua_senha
-            spring.jpa.hibernate.ddl-auto=update # Ou 'create', 'create-drop' conforme sua necessidade
+            spring.jpa.hibernate.ddl-auto=update
             spring.jpa.show-sql=true
             ```
-        * **Exemplo para H2 (em memória - ideal para testes e desenvolvimento rápido):**
+        * **Exemplo para H2 (em memória):**
             ```properties
             spring.datasource.url=jdbc:h2:mem:vollmed_db
             spring.datasource.driverClassName=org.h2.Driver
@@ -108,6 +114,10 @@ Para executar este projeto (backend API) em sua máquina local, siga os passos a
             spring.jpa.hibernate.ddl-auto=update
             spring.jpa.show-sql=true
             ```
+    * **Adicione a chave secreta para o JWT**:
+        ```properties
+        api.security.token.secret=SUA_CHAVE_SECRETA_JWT_AQUI # Use uma string longa e complexa!
+        ```
 
 5.  **Compile e execute o projeto:**
 
@@ -122,11 +132,41 @@ Para executar este projeto (backend API) em sua máquina local, siga os passos a
         ```
     * A API será iniciada, por padrão, em `http://localhost:8080`.
 
+### Autenticação e Autorização
+
+Todos os endpoints, **exceto `/login`**, exigem autenticação. Para acessar os recursos protegidos, você precisará de um JWT válido.
+
+1.  **Realize o Login para Obter um JWT**:
+    * **`POST /login`**
+        * **Descrição**: Autentica um usuário e retorna um JSON Web Token (JWT).
+        * **Corpo da Requisição (JSON)**:
+            ```json
+            {
+                "login": "seu_usuario",
+                "senha": "sua_senha"
+            }
+            ```
+            * **Nota**: Certifique-se de que o usuário `seu_usuario` e `sua_senha` existam no seu banco de dados. Você pode precisar criar um usuário manualmente para o primeiro login (ex: via script SQL ou ferramenta de banco de dados).
+        * **Resposta (JSON)**:
+            ```json
+            {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ..."
+            }
+            ```
+        * Copie o valor do `token`.
+
+2.  **Use o JWT para Acessar Endpoints Protegidos**:
+    * Para todas as outras requisições (POST, GET, PUT, DELETE para `/medicos` e `/pacientes`), inclua o JWT no cabeçalho `Authorization` no formato `Bearer <SEU_TOKEN_JWT>`.
+    * **Exemplo de Cabeçalho HTTP**:
+        ```
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ...
+        ```
+
 ### Endpoints da API
 
-Uma vez que o backend esteja rodando, você pode interagir com os seguintes endpoints:
+Uma vez que o backend esteja rodando e você tenha um token JWT, você pode interagir com os seguintes endpoints:
 
-#### Endpoints de Médicos (`/medicos`)
+#### Endpoints de Médicos (`/medicos`) - **Requer Autenticação**
 
 * **`POST /medicos`**
     * **Descrição**: Cadastra um novo médico no sistema.
@@ -186,7 +226,7 @@ Uma vez que o backend esteja rodando, você pode interagir com os seguintes endp
     * **Exemplo**: `http://localhost:8080/medicos/1`
     * **Resposta**: `204 No Content`.
 
-#### Endpoints de Pacientes (`/pacientes`)
+#### Endpoints de Pacientes (`/pacientes`) - **Requer Autenticação**
 
 * **`POST /pacientes`**
     * **Descrição**: Cadastra um novo paciente no sistema.
@@ -249,10 +289,10 @@ Uma vez que o backend esteja rodando, você pode interagir com os seguintes endp
 
 ## 📈 Melhorias Futuras
 
-* Implementar autenticação e autorização (ex: JWT) para proteger todos os endpoints da API.
+* Implementar a entidade `Consulta`, permitindo o agendamento e gerenciamento de consultas entre médicos e pacientes.
+* Adicionar validações mais complexas para agendamentos de consultas (ex: horários disponíveis do médico).
 * Gerar documentação interativa da API utilizando **OpenAPI/Swagger**.
-* Adicionar testes de integração e unitários mais abrangentes para todos os serviços e controladores.
-* Expandir a API para incluir a entidade `Consulta`, permitindo o agendamento e gerenciamento de consultas entre médicos e pacientes.
+* Implementar testes de integração e unitários mais abrangentes para todos os serviços e controladores, incluindo os de segurança.
 * Refinar o tratamento de exceções para cenários específicos e mensagens de erro mais amigáveis.
 * Otimizar o desempenho de consultas para grandes volumes de dados.
 
@@ -268,6 +308,7 @@ Uma vez que o backend esteja rodando, você pode interagir com os seguintes endp
 ## 📫 Contato
 
 * **LinkedIn**: [@Abner Vital](https://www.linkedin.com/in/abner-vital-233730141/)
+* **GitHub**: [@AbnerVital](https://github.com/AbnerVital)
 
 ---
 

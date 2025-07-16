@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class ConsultaController {
 
     @Autowired
-    ConsultaService consultaService;
+    AgendaDeConsultas agenda;
 
     @Autowired
     ConsultaRepository consultaRepository;
@@ -23,7 +23,7 @@ public class ConsultaController {
     @PostMapping
     @Transactional
     public ResponseEntity agendar(@RequestBody @Valid DadosAgendamentoConsulta dados) {
-        var consulta = consultaService.agendar(dados);
+        var consulta = agenda.agendar(dados);
         return ResponseEntity.ok(new DadosDetalhamentoConsulta(consulta));
     }
 

@@ -1,5 +1,6 @@
 package med.voll.api.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import med.voll.api.domain.consulta.*;
@@ -22,6 +23,7 @@ public class ConsultaController {
 
     @PostMapping
     @Transactional
+    @SecurityRequirement(name = "bearer-key")
     public ResponseEntity agendar(@RequestBody @Valid DadosAgendamentoConsulta dados) {
         var consulta = agenda.agendar(dados);
         return ResponseEntity.ok(new DadosDetalhamentoConsulta(consulta));
